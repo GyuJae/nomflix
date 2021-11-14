@@ -1,27 +1,11 @@
 import { motion, Variants } from "framer-motion";
 import React from "react";
 import { useQuery } from "react-query";
-import { useLocation } from "react-router";
+import { useHistory, useLocation } from "react-router";
 import styled from "styled-components";
 import { getSearchData, IMovieResult } from "../api";
 import Loading from "../components/Loading";
 import { makeImagePath } from "../utills";
-
-const cardVariants: Variants = {
-  offscreen: {
-    y: 300,
-    opacity: 0,
-  },
-  onscreen: {
-    y: 50,
-    opacity: 1,
-    transition: {
-      type: "spring",
-      bounce: 0.4,
-      duration: 0.8,
-    },
-  },
-};
 
 const Container = styled.div`
   display: flex;
@@ -30,9 +14,12 @@ const Container = styled.div`
   flex-direction: column;
   padding-bottom: 100px;
   background-color: black;
+  width: 100%;
+  margin: 0px auto;
 `;
 
 const Wraper = styled.div`
+  margin: 0px auto;
   padding-bottom: 80px;
   display: grid;
   padding-top: 50px;
@@ -70,12 +57,39 @@ const ShowMore = styled(motion.div)`
   }
 `;
 
+const cardVariants: Variants = {
+  offscreen: {
+    y: 300,
+    opacity: 0,
+  },
+
+  onscreen: {
+    y: 50,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      bounce: 0.4,
+      duration: 0.8,
+    },
+  },
+};
+
 const Search = () => {
+  const history = useHistory();
   const location = useLocation();
   const query = new URLSearchParams(location.search).get("keyword");
+  const page = new URLSearchParams(location.search).get("pageNum");
+  const pageNum: number = page ? +page : 1;
   const { data, isLoading } = useQuery<IMovieResult>(["movie", "search"], () =>
-    getSearchData({ tvOrMovie: "movie", query: query || "" })
+    getSearchData({ tvOrMovie: "movie", query: query || "", pageNum })
   );
+
+  const onClickShowMore = () => {
+    history.push({
+      pathname: `/search?keyword=${query}&pageNum=${pageNum + 1}`,
+    });
+    history.go(0);
+  };
 
   return (
     <Container>
@@ -84,7 +98,7 @@ const Search = () => {
           <Loading />
         ) : (
           data &&
-          data.results
+          data?.results
             .filter((movie) => movie.poster_path !== null)
             .map((movie) => (
               <motion.div
@@ -109,6 +123,7 @@ const Search = () => {
           whileHover={{
             scale: 1.2,
           }}
+          onClick={onClickShowMore}
           key={0}
         >
           Show More

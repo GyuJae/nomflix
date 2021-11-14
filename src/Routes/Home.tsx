@@ -61,12 +61,12 @@ const Home = () => {
         <>
           <Banner
             bgPhoto={makeImagePath(
-              (now_playing && now_playing.results[0].backdrop_path) || ""
+              (now_playing && now_playing?.results[0].backdrop_path) || ""
             )}
           >
-            <Title>{now_playing && now_playing.results[0].title}</Title>
+            <Title>{now_playing && now_playing?.results[0].title}</Title>
             <Overview>
-              {now_playing && now_playing.results[0].overview}
+              {now_playing && now_playing?.results[0].overview}
             </Overview>
           </Banner>
           {now_playing && <SliderMovies {...now_playing} location={0} />}

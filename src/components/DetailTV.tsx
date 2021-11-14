@@ -95,4 +95,4 @@ const DetailTV = () => {
   ) : null;
 };
 
-export default DetailTV;
+export default React.memo(DetailTV);

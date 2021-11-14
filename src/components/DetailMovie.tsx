@@ -94,4 +94,4 @@ const DetailMovie = () => {
   ) : null;
 };
 
-export default DetailMovie;
+export default React.memo(DetailMovie);
